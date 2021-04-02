@@ -1,6 +1,6 @@
 import os
 
-SECRET_KEY = os.environ.get('SECRET_KEY', 'string')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "sqlite:///blog.db")
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 MAIL_SERVER = 'smtp.gmail.com'
