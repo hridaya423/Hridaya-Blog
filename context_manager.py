@@ -34,14 +34,6 @@ def get_background(configuration='website_configuration'):
         return dict(background_image="")
 
 
-def get_navbar(configuration=None):
-    try:
-        return dict(navbar=get_data()["website_configuration"]["navigation_bar_color"]) if configuration is None else \
-            get_data()["website_configuration"]["navigation_bar_color"]
-    except (KeyError, TypeError):
-        return dict(navbar='#FFFFFF') if configuration is None else '#FFFFFF'
-
-
 def get_social():
     try:
         soc = get_data()["website_configuration"]
@@ -51,7 +43,11 @@ def get_social():
                             "youtube": soc["youtube_link"],
                             "linkedin": soc["linkedin_link"],
                             "instagram": soc["instagram_link"],
-                            "dev": soc["dev_link"]})
+                            "dev": soc["dev_link"],
+                            "whatsapp": soc["whatsapp_link"],
+                            "reddit": soc["reddit_link"],
+                            "pinterest": soc["pinterest_link"],
+                            "telegram": soc["telegram_link"]})
     except KeyError:
         return dict(social={"twitter": "https://www.twitter.com",
                             "github": "https://www.github.com",
@@ -59,7 +55,11 @@ def get_social():
                             "instagram": "https://www.instagram.com",
                             "youtube": "https://www.youtube.com",
                             "linkedin": "https://www.linkedin.com",
-                            "dev": "https://dev.to"})
+                            "dev": "https://dev.to",
+                            "whatsapp": "https://www.whatsapp.com",
+                            "reddit": "https://www.reddit.com",
+                            "pinterest": "https://www.pinterest.com",
+                            "telegram": "https://www.telegram.com"})
 
 
 def newsletter_functionality(configuration=None):

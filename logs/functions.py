@@ -24,19 +24,22 @@ def log_changes(configuration, new_configuration, keys_lst, values_lst):
             current_key = ' '.join(keys_lst[index].split('_')).title()
         else:
             current_key = keys_lst[index].title()
+        current_change = values_lst[index] if values_lst[index].strip() != '' else None
         if not track_changes:
-            changes_lst.append(f"{current_key}: {values_lst[index]}")
+            changes_lst.append(f"{current_key}: {current_change}")
         else:
             try:
-                previous_version = data[configuration].get(value, f"{current_key}: {values_lst[index]}")
+                previous_version = data[configuration].get(value, f"{current_key}: {current_change}")
             except KeyError:
-                changes_lst.append(f"{current_key}: {values_lst[index]}")
+                changes_lst.append(f"{current_key}: {current_change}")
                 continue
             if values_lst[index] != previous_version:
-                changes_lst.append(f"{current_key}: {previous_version} -> {values_lst[index]}")
+                changes_lst.append(f"{current_key}: {previous_version} -> {current_change}")
     changes = '<br><br>'.join(changes_lst)
-    new_log = Log(user=current_user, user_name=current_user.name, category='configuration',
-                  description=f"{current_user.name} configured the {' '.join(configuration.split('_')).title()}.<br><br>"
-                              f"Changes:<br><br>{changes}", date=generate_date(), user_email=current_user.email)
-    db.session.add(new_log)
-    db.session.commit()
+    if any(changes_lst):
+        new_log = Log(user=current_user, user_name=current_user.name, category='configuration',
+                      description=f"{current_user.name} configured the {' '.join(configuration.split('_')).title()}."
+                                  f"<br><br>"
+                                  f"Changes:<br><br>{changes}", date=generate_date(), user_email=current_user.email)
+        db.session.add(new_log)
+        db.session.commit()

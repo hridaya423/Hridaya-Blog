@@ -2,13 +2,11 @@ from flask_ckeditor import CKEditorField
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, SelectField
 from wtforms.validators import DataRequired, Email, URL
-from wtforms_components import ColorField
 
 
 class CreatePostForm(FlaskForm):
     title = StringField("Post Title", validators=[DataRequired()])
     subtitle = StringField("Subtitle", validators=[DataRequired()])
-    navigation_bar_color = ColorField()
     img_url = StringField("Post Image URL")
     body = CKEditorField("Post Content", validators=[DataRequired()])
     submit = SubmitField("Submit", render_kw={"style": "margin-top: 20px;"})
@@ -31,7 +29,6 @@ class WebConfigForm(FlaskForm):
                                  render_kw={"style": "margin-bottom: 10px;"})
     homepage_subtitle = StringField("Homepage Subtitle", validators=[DataRequired()],
                                     render_kw={"style": "margin-bottom: 10px;"})
-    navigation_bar_color = ColorField()
     background_image = StringField("Background Image URL",
                                    render_kw={"style": "margin-bottom: 10px;"})
     twitter_link = StringField("Twitter Link",
@@ -48,6 +45,15 @@ class WebConfigForm(FlaskForm):
                                  render_kw={"style": "margin-bottom: 10px;"})
     dev_link = StringField("Dev Link",
                            render_kw={"style": "margin-bottom: 10px;"})
+    whatsapp_link = StringField("WhatsApp Link",
+                                render_kw={"style": "margin-bottom: 10px;"})
+    reddit_link = StringField("Reddit Link",
+                              render_kw={"style": "margin-bottom: 10px;"})
+    pinterest_link = StringField("Pinterest Link",
+                                 render_kw={"style": "margin-bottom: 10px;"})
+    telegram_link = StringField("Telegram Link",
+                                render_kw={"style": "margin-bottom: 10px;"})
+
     submit = SubmitField("Save Changes", render_kw={"style": "margin-top: 20px;"})
 
 

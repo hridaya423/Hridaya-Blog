@@ -15,7 +15,6 @@ def get_data(homepage=False):  # GET CONFIG DATA
                             "name": "Website",
                             "homepage_title": "A website",
                             "homepage_subtitle": "A fully fledged website",
-                            "navigation_bar_color": "#ffffff",
                             "background_image": "https://www.panggi.com/images/featured/python.png",
                             "twitter_link": "https://www.twitter.com",
                             "github_link": "https://www.github.com",
@@ -23,7 +22,11 @@ def get_data(homepage=False):  # GET CONFIG DATA
                             "instagram_link": "https://www.instagram.com",
                             "youtube_link": "https://www.youtube.com",
                             "linkedin_link": "https://www.linkedin.com",
-                            "dev_link": "https://dev.to"
+                            "dev_link": "https://dev.to",
+                            "whatsapp_link": "https://www.whatsapp.com",
+                            "reddit_link": "https://www.reddit.com",
+                            "pinterest_link": "https://www.pinterest.com",
+                            "telegram_link": "https://www.telegram.com"
                         },
                         "api_configuration": {
                             "all_posts": True,
