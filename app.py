@@ -1,21 +1,21 @@
 from flask import Flask
-from extensions import ckeditor, bootstrap, mail, db, login_manager, search, gravatar, csrf_protection
+from extensions import ckeditor, bootstrap, mail, db, login_manager, search, gravatar, csrf_protection, flask_api
 from context_manager import get_name, get_date, get_background, get_social, newsletter_functionality
 from error_manager import unauthorized, forbidden, not_found, internal_error, bad_request
 from post_system.post.routes import post
 from post_system.comment.routes import comment
 from post_system.reply.routes import reply
 from search.routes import search_routing
-from about.routes import about_routing
+from general.about.routes import about_routing
 from verification_manager.routes import verification
 from users_manager.routes import user_operations
 from api.routes import api
-from contact.routes import contact_routing
+from general.contact.routes import contact_routing
 from notification_system.website_notifications.routes import notification_routing
 from website_settings.routes import website_settings
 from login_system.routes import login_system
 from newsletter.routes import newsletter
-from home import home
+from general.home import home
 
 
 def create_app(config_file='app_config.py'):
@@ -31,6 +31,7 @@ def create_app(config_file='app_config.py'):
     search.init_app(app)
     gravatar.init_app(app)
     csrf_protection.init_app(app)
+    flask_api.init_app(app)
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -66,7 +67,8 @@ def create_app(config_file='app_config.py'):
 
 app = create_app()
 app.app_context().push()
-from models import BlogPost, ApiKey, DeletionReport, Comment, DeletedPost, User, Reply, Notification, Data
+from models import User
+
 db.create_all()
 
 app.context_processor(get_name)
@@ -74,7 +76,6 @@ app.context_processor(get_date)
 app.context_processor(get_background)
 app.context_processor(get_social)
 app.context_processor(newsletter_functionality)
-
 
 if __name__ == '__main__':
     app.run(debug=True)
