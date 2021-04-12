@@ -1,9 +1,10 @@
 from sqlalchemy.orm.exc import UnmappedInstanceError
 from werkzeug.utils import redirect
 
+from logs.functions import log_permanent_deletion, log_deletion
 from models import BlogPost, DeletedPost, Comment, Reply, User
 from html2text import html2text
-from flask import abort, url_for, render_template
+from flask import abort, url_for, render_template, make_response, jsonify
 from utils import generate_date
 from flask_login import current_user
 from extensions import db
@@ -24,7 +25,8 @@ def get_posts():
 
 
 def get_post_dict(post):
-    post_dict = {"author": post.author.name,
+    post_dict = {"post_id": post.id,
+                 "author": post.author.name,
                  "title": post.title,
                  "subtitle": post.subtitle,
                  "published_on": post.date,
@@ -104,25 +106,34 @@ def post_deletion(requested_post):
     if current_user.is_authenticated and current_user.author is True and \
             requested_post.author.email == current_user.email \
             or current_user.is_authenticated and current_user.admin is True:
-        try:
-            post_comments = requested_post.comments
-        except AttributeError:
-            return abort(404)
-        new_post = get_full_post_dict(requested_post)
-        new_deleted = DeletedPost(json_column=new_post)
-        db.session.add(new_deleted)
-        [db.session.delete(comment) for comment in post_comments]
-        for reply_item in Reply.query.all():
-            try:
-                reply = reply_item.parent_comment.post_id
-            except (AttributeError, TypeError):
-                db.session.delete(reply_item)
-        db.session.delete(requested_post)
-        [clean_notifications(current_category) for current_category in ['comment', 'reply']]
-        db.session.commit()
+        log_deletion(requested_post)
+        store_deleted_post(requested_post)
         return redirect(url_for('home.home_page'))
     else:
         return abort(403)
+
+
+def store_deleted_post(requested_post, allow_redirects=True):
+    try:
+        post_comments = requested_post.comments
+    except AttributeError:
+        if allow_redirects:
+            return abort(404)
+        else:
+            return make_response(
+                jsonify(response="An error occurred the handling of your request, the post could not be found."))
+    new_post = get_full_post_dict(requested_post)
+    new_deleted = DeletedPost(json_column=new_post)
+    db.session.add(new_deleted)
+    [db.session.delete(comment) for comment in post_comments]
+    for reply_item in Reply.query.all():
+        try:
+            reply = reply_item.parent_comment.post_id
+        except (AttributeError, TypeError):
+            db.session.delete(reply_item)
+    db.session.delete(requested_post)
+    [clean_notifications(current_category) for current_category in ['comment', 'reply']]
+    db.session.commit()
 
 
 def post_recovery(database_entry, requested_post):
@@ -160,6 +171,7 @@ def post_recovery(database_entry, requested_post):
 def post_permanent_deletion(database_entry):
     if current_user.is_authenticated and current_user.admin:
         try:
+            log_permanent_deletion(requested_post=database_entry)
             db.session.delete(database_entry)
         except UnmappedInstanceError:
             return abort(404)
